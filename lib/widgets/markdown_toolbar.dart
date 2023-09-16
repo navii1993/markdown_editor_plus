@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import '../src/toolbar.dart';
-import 'modal_select_emoji.dart';
 import 'modal_input_url.dart';
+import 'modal_select_emoji.dart';
 import 'toolbar_item.dart';
 
 class MarkdownToolbar extends StatelessWidget {
@@ -19,6 +20,7 @@ class MarkdownToolbar extends StatelessWidget {
   final bool showEmojiSelection;
   final VoidCallback? onActionCompleted;
   final String? markdownSyntax;
+  final Function? imageUri;
 
   const MarkdownToolbar({
     Key? key,
@@ -34,6 +36,7 @@ class MarkdownToolbar extends StatelessWidget {
     this.onActionCompleted,
     this.showPreviewButton = true,
     this.showEmojiSelection = true,
+    this.imageUri,
   }) : super(key: key);
 
   @override
@@ -222,8 +225,13 @@ class MarkdownToolbar extends StatelessWidget {
                 if (toolbar.hasSelection) {
                   toolbar.action("[enter link description here](", ")");
                 } else {
-                  await _showModalInputUrl(context,
-                      "[enter link description here](", controller.selection);
+                  await _showModalInputUrl(
+                    context,
+                    "[enter link description here](",
+                    controller.selection,
+                    false,
+                    null,
+                  );
                 }
 
                 onActionCompleted?.call();
@@ -242,6 +250,8 @@ class MarkdownToolbar extends StatelessWidget {
                     context,
                     "![enter image description here](",
                     controller.selection,
+                    true,
+                    imageUri,
                   );
                 }
 
@@ -322,6 +332,8 @@ class MarkdownToolbar extends StatelessWidget {
     BuildContext context,
     String leftText,
     TextSelection selection,
+    bool sideButton,
+    Function? imageUri,
   ) {
     return showModalBottomSheet(
       shape: const RoundedRectangleBorder(
@@ -337,6 +349,8 @@ class MarkdownToolbar extends StatelessWidget {
           leftText: leftText,
           selection: selection,
           onActionCompleted: onActionCompleted,
+          sideButton: sideButton,
+          imageUri: imageUri,
         );
       },
     );

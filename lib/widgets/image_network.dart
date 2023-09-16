@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -13,6 +15,9 @@ class ImageNetworkMarkdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (uri.contains("base64")) {
+      return Image.memory(base64Decode(uri.split(",")[1]));
+    }
     return Image.network(
       uri.toString(),
       loadingBuilder: _loadingBuilder,

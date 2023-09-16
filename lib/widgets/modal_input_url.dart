@@ -1,7 +1,3 @@
-import 'dart:convert';
-
-import 'package:file_picker/_internal/file_picker_web.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:markdown_editor_plus/src/toolbar.dart';
 
@@ -11,12 +7,16 @@ class ModalInputUrl extends StatelessWidget {
     required this.toolbar,
     required this.leftText,
     required this.selection,
+    required this.sideButton,
+    this.imageUri,
     this.onActionCompleted,
   }) : super(key: key);
 
   final Toolbar toolbar;
   final String leftText;
   final TextSelection selection;
+  final bool sideButton;
+  final Function? imageUri;
   final VoidCallback? onActionCompleted;
 
   @override
@@ -34,7 +34,7 @@ class ModalInputUrl extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
-              "Please provide a URL here.",
+              "Please provide a URL here or Choose a photo from your device.",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -43,81 +43,78 @@ class ModalInputUrl extends StatelessWidget {
           ),
           Row(
             children: [
-              TextField(
-                autocorrect: false,
-                autofocus: true,
-                cursorRadius: const Radius.circular(16),
-                decoration: const InputDecoration(
-                  hintText: "Input your url.",
-                  helperText: "example: https://example.com",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(16.0)),
+              Expanded(
+                child: TextField(
+                  autocorrect: false,
+                  autofocus: true,
+                  cursorRadius: const Radius.circular(16),
+                  decoration: const InputDecoration(
+                    hintText: "Input your url.",
+                    helperText: "example: https://example.com",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(16.0)),
+                    ),
                   ),
-                ),
-                style: const TextStyle(fontSize: 16),
-                enableInteractiveSelection: true,
-                onSubmitted: (String value) {
-                  Navigator.pop(context);
+                  style: const TextStyle(fontSize: 16),
+                  enableInteractiveSelection: true,
+                  onSubmitted: (String value) {
+                    Navigator.pop(context);
 
-                  /// check if the user entered an empty input
-                  if (value.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text(
-                          "Please input url",
-                          style: TextStyle(
-                            color: Colors.white,
+                    /// check if the user entered an empty input
+                    if (value.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text(
+                            "Please input url",
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
                           ),
+                          backgroundColor: Colors.red.withOpacity(0.8),
+                          duration: const Duration(milliseconds: 700),
                         ),
-                        backgroundColor: Colors.red.withOpacity(0.8),
-                        duration: const Duration(milliseconds: 700),
-                      ),
-                    );
-                  } else {
-                    if (!value
-                        .contains(RegExp(r'https?:\/\/(www.)?([^\s]+)'))) {
-                      value = "http://$value";
+                      );
+                    } else {
+                      if (!value
+                          .contains(RegExp(r'https?:\/\/(www.)?([^\s]+)'))) {
+                        value = "http://$value";
+                      }
+                      toolbar.action(
+                        "$leftText$value)",
+                        "",
+                        textSelection: selection,
+                      );
                     }
-                    toolbar.action(
-                      "$leftText$value)",
-                      "",
-                      textSelection: selection,
-                    );
-                  }
 
-                  onActionCompleted?.call();
-                },
-              ),
-              const Text(" or "),
-              ElevatedButton(
-                onPressed: () async {
-                  Navigator.pop(context);
-                  final result = await FilePickerWeb.platform.pickFiles(
-                    type: FileType.image,
-                    allowCompression: true,
-                    dialogTitle: 'Choose photo',
-                    allowMultiple: false,
-                  );
-                  if (result?.isSinglePick ?? false) {
-                    final file = result!.files.single;
-                    final ext = file.extension;
-                    final b64enc = base64Encode(file.bytes!);
-                    final value = "data:image/$ext;base64,$b64enc";
-                    toolbar.action(
-                      "$leftText$value",
-                      "",
-                      textSelection: selection,
-                    );
-                  }
-                  onActionCompleted?.call();
-                },
-                child: const Row(
-                  children: [
-                    Icon(Icons.upload_file),
-                    Text("Upload photo"),
-                  ],
+                    onActionCompleted?.call();
+                  },
                 ),
               ),
+              ...(sideButton && imageUri != null
+                  ? [
+                      const Text(" or "),
+                      ElevatedButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          final value = imageUri!();
+                          if (!value.isNull) {
+                            toolbar.action(
+                              "$leftText$value",
+                              "",
+                              textSelection: selection,
+                            );
+                          }
+                          onActionCompleted?.call();
+                        },
+                        child: const Row(
+                          children: [
+                            Icon(Icons.upload_file),
+                            Text("Upload photo"),
+                          ],
+                        ),
+                      )
+                    ]
+                  : [Container()])
             ],
           ),
         ],

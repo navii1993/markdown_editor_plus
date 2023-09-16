@@ -31,26 +31,28 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text("Home Screen"),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: const [
-          MarkdownAutoPreview(
-            decoration: InputDecoration(
-              hintText: 'Markdown Auto Preview',
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: const [
+            MarkdownAutoPreview(
+              decoration: InputDecoration(
+                hintText: 'Markdown Auto Preview',
+              ),
+              emojiConvert: true,
+              // maxLines: 10,
+              // minLines: 1,
+              // expands: true,
             ),
-            emojiConvert: true,
-            // maxLines: 10,
-            // minLines: 1,
-            // expands: true,
-          ),
-          SplittedMarkdownFormField(
-            markdownSyntax: '## Headline',
-            decoration: InputDecoration(
-              hintText: 'Splitted Markdown FormField',
+            SplittedMarkdownFormField(
+              markdownSyntax: '## Headline',
+              decoration: InputDecoration(
+                hintText: 'Splitted Markdown FormField',
+              ),
+              emojiConvert: true,
             ),
-            emojiConvert: true,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

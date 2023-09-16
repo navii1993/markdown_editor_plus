@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+
 import '../src/constants.dart';
 import '../src/emoji_input_formatter.dart';
 import '../src/toolbar.dart';
@@ -28,6 +29,7 @@ class MarkdownAutoPreview extends StatefulWidget {
     this.readOnly = false,
     this.expands = false,
     this.decoration = const InputDecoration(isDense: true),
+    this.imageUri,
   }) : super(key: key);
 
   /// Markdown syntax to reset the field to
@@ -41,6 +43,8 @@ class MarkdownAutoPreview extends StatefulWidget {
   ///
   /// if false, toolbar widget will not display
   final bool enableToolBar;
+
+  final Function? imageUri;
 
   /// Enable Emoji options
   ///
@@ -310,6 +314,7 @@ class _MarkdownAutoPreviewState extends State<MarkdownAutoPreview> {
                   emojiConvert: widget.emojiConvert,
                   toolbarBackground: widget.toolbarBackground,
                   expandableBackground: widget.expandableBackground,
+                  imageUri: widget.imageUri,
                 )
             ],
           );
