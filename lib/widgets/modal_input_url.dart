@@ -96,8 +96,8 @@ class ModalInputUrl extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () async {
                           Navigator.pop(context);
-                          final value = imageUri!();
-                          if (!value.isNull) {
+                          final value = await imageUri!();
+                          if (value != null) {
                             toolbar.action(
                               "$leftText$value",
                               "",
