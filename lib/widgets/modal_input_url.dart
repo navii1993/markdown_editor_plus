@@ -99,7 +99,7 @@ class ModalInputUrl extends StatelessWidget {
                           final value = await imageUri!();
                           if (value != null) {
                             toolbar.action(
-                              "$leftText$value",
+                              "$leftText$value)",
                               "",
                               textSelection: selection,
                             );
