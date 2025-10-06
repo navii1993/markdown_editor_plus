@@ -93,7 +93,8 @@ class Emoji {
   }
 
   @override
-  int get hashCode => Object.hash(name, code);
+  //int get hashCode => Object.hash(name, code);
+  int get hashCode => hashValues(name.hashCode, code.hashCode);
 
   Emoji clone() {
     return Emoji(name, code);
